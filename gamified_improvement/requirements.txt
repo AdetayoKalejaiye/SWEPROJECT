@@ -3,3 +3,4 @@ python-decouple==3.8
 psycopg2-binary
 django-crispy-forms==2.0
 pillow==9.5.0
+gunicorn
