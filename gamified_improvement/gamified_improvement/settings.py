@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-74_j2esh2h%!iav(g8h&5kf5q-&j!-476x)$2qew+pm%3n1oe@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['sweproject-sn80.onrender.com']
+ALLOWED_HOSTS = ['sweproject-sn80.onrender.com', '127.0.0.1']
 
 
 # Application definition
@@ -83,11 +83,14 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'swe_postgres',  # The correct database name
+        'USER': 'swe_postgres_user',  # The correct username
+        'PASSWORD': 'OWD9QMzQRhPpE18aTNMAdEsgARWcnOhB',  # Your database password
+        'HOST': 'dpg-d04iq5h5pdvs73cdcj6g-a.oregon-postgres.render.com',  # The hostname
+        'PORT': '5432',  # Default PostgreSQL port
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
