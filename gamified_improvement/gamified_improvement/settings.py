@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'authentication',
-    'core'
+    'core.apps.CoreConfig',
 ]
 
 MIDDLEWARE = [
@@ -134,3 +134,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'core:index'
 LOGIN_URL = 'auth:login'
 LOGOUT_REDIRECT_URL = 'core:index'
+MIDDLEWARE += ['core.middleware.UpdateStreakMiddleware']

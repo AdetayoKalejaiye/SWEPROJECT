@@ -9,11 +9,6 @@
     
     <div class="card">
         <div class="card-body">
-            <div class="btn-group mb-4 d-flex justify-content-center" role="group" aria-label="Time filter">
-                <button type="button" class="btn btn-primary active">This Week</button>
-                <button type="button" class="btn btn-outline-primary">This Month</button>
-                <button type="button" class="btn btn-outline-primary">All Time</button>
-            </div>
 
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
@@ -27,11 +22,13 @@
                     </thead>
                     <tbody>
                         {% for entry in leaderboard %}
-                        <tr {% if entry.user == request.user %}class="table-active"{% endif %}>
+                        <tr {% if entry.username == request.user.username %}class="table-active"{% endif %}>
+
                             <td class="text-center fw-bold">{{ forloop.counter }}</td>
-                            <td>{{ entry.user.get_full_name }}</td>
+                            <td>{{ entry.username }}</td>
                             <td class="text-primary fw-bold">{{ entry.points }}</td>
                             <td><span class="badge bg-warning text-dark">{{ entry.streak }} days</span></td>
+
                         </tr>
                         {% empty %}
                         <tr>

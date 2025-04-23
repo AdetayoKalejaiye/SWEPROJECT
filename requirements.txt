@@ -1,5 +1,5 @@
 Django>=4.2.0
 python-decouple==3.8
-psycopg2-binary==2.9.6
+psycopg2-binary
 django-crispy-forms==2.0
 pillow==9.5.0

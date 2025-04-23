@@ -5,7 +5,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-from .models import Plan, UserPlan, UserGoal
+from .models import Plan, UserPlan, UserGoal, Profile
 from .forms import UserProfileForm
 import json
 from django.utils import timezone
@@ -21,7 +21,9 @@ def index(request):
         {'slug': 'mindfulness', 'name': 'Mindfulness', 'icon': '🧘'},
         {'slug': 'productivity', 'name': 'Productivity', 'icon': '⚡'},
     ]
-    
+    profile = Profile.objects.filter(user=request.user).first()
+    streak = profile.streak if profile else 0
+    points = profile.points if profile else 0
     view_type = request.GET.get('view', 'discover')
     active_category = request.GET.get('category')
     search_query = request.GET.get('search', '')
@@ -43,13 +45,23 @@ def index(request):
         'view_type': view_type,
         'my_plans': my_plans,
         'discover_plans': discover_plans,
-        'streak': request.user.profile.streak if hasattr(request.user, 'profile') else 0
+        'streak': streak,
+        'points': points
     }
+    print(request.user.profile.points, request.user.profile.streak)
+
     return render(request, 'core/index.html', context)
 
 
+from django.contrib.auth.models import User
+
 def leaderboard(request):
-    return render(request, 'core/leaderboard.html')
+    users = User.objects.select_related('profile').order_by('-profile__streak')
+
+    context = {
+        'leaderboard': users,
+    }
+    return render(request, 'core/leaderboard.html', context)
 
 def friends(request):
     return render(request, 'core/friends.html')
@@ -159,9 +171,9 @@ def toggle_goal(request):
         })
     except UserGoal.DoesNotExist:
         return JsonResponse({'success': False}, status=404)
-
-
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from core.models import Profile  # Make sure this import is here
 
 @login_required
 def leaderboard(request):
@@ -169,12 +181,15 @@ def leaderboard(request):
 
     leaderboard_data = []
     for user in users:
-        points = UserGoal.objects.filter(user_plan__user=user, completed=True).count()
-        leaderboard_data.append({
-            'username': user.username,
-            'points': points,
-        })
+        profile = getattr(user, 'profile', None)
+        if profile:
+            leaderboard_data.append({
+                'username': user.username,
+                'points': profile.points,
+                'streak': profile.streak,
+            })
 
+    # Sort by points descending
     leaderboard_data.sort(key=lambda x: x['points'], reverse=True)
 
     context = {
